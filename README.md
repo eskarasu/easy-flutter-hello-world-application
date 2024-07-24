@@ -1,4 +1,4 @@
-# Project Title
+# EASY FLUTTER HELLO WORLD APPLICATON
 
 This repository contains a simple 'Hello World' mobile application developed using Flutter.
 
