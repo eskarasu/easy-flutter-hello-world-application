@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 void main() {
   runApp(MyApp());
@@ -28,11 +30,22 @@ class _MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final Map<String, String> _users = {
-    'user1': 'password1',
-    'user2': 'password2',
-  };
+  Map<String, String> _users = {};
   String _message = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsers();
+  }
+
+  Future<void> _loadUsers() async {
+    final String response = await rootBundle.loadString('assets/users.json');
+    final data = await json.decode(response);
+    setState(() {
+      _users = Map<String, String>.from(data);
+    });
+  }
 
   void _login() {
     String username = _usernameController.text;
