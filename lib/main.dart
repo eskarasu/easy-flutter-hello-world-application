@@ -26,31 +26,109 @@ class MyCustomForm extends StatefulWidget {
 
 class _MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final Map<String, String> _users = {
+    'user1': 'password1',
+    'user2': 'password2',
+  };
+  String _message = '';
+
+  void _login() {
+    String username = _usernameController.text;
+    String password = _passwordController.text;
+
+    if (_users.containsKey(username) && _users[username] == password) {
+      setState(() {
+        _message = 'Login successful';
+      });
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => TurquoisePage()),
+      );
+    } else {
+      setState(() {
+        _message = 'Invalid username or password';
+      });
+    }
+  }
+
+  void _signUp() {
+    String username = _usernameController.text;
+    String password = _passwordController.text;
+
+    if (username.isNotEmpty && password.isNotEmpty) {
+      if (!_users.containsKey(username)) {
+        setState(() {
+          _users[username] = password;
+          _message = 'User registered successfully';
+        });
+      } else {
+        setState(() {
+          _message = 'Username already exists';
+        });
+      }
+    } else {
+      setState(() {
+        _message = 'Please enter a valid username and password';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       child: Column(
-        // ...
         children: <Widget>[
-          // ...
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _usernameController,
+              decoration: InputDecoration(
+                labelText: 'Username',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your username';
+                }
+                return null;
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+              ),
+              obscureText: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your password';
+                }
+                return null;
+              },
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: ElevatedButton(
-              onPressed: () {
-                // Safely calling the 'validate' method by adding null check.
-                if (_formKey.currentState?.validate() ?? false) {
-                  // If the form is valid, navigate to a new page with turquoise background.
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TurquoisePage()),
-                  );
-                }
-              },
+              onPressed: _login,
               child: Text('Login'),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: ElevatedButton(
+              onPressed: _signUp,
+              child: Text('Sign Up'),
+            ),
+          ),
+          Text(_message),
         ],
       ),
     );
